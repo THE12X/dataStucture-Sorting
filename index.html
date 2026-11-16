@@ -83,19 +83,22 @@
             </div>
 
             <!-- Algorithm Switcher Tabs -->
-            <div class="flex items-center bg-obsidian-900/90 p-1.5 rounded-xl border border-obsidian-700 shadow-inner">
-                <button data-algo="bubble" class="algo-tab px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-electricLime text-obsidian-900 shadow">
+            <div class="flex flex-wrap justify-center items-center bg-obsidian-900/90 p-1.5 rounded-xl border border-obsidian-700 shadow-inner gap-1">
+                <button data-algo="bubble" class="algo-tab px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-electricLime text-obsidian-900 shadow">
                     <i class="fa-solid fa-chart-column"></i> Bubble Sort
                 </button>
-                <button data-algo="merge" class="algo-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2">
+                <button data-algo="merge" class="algo-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2">
                     <i class="fa-solid fa-code-merge"></i> Merge Sort
                 </button>
-                <button data-algo="quick" class="algo-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2">
+                <button data-algo="quick" class="algo-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2">
                     <i class="fa-solid fa-bolt"></i> Quick Sort
+                </button>
+                <button data-algo="heap" class="algo-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-sitemap"></i> Heap Sort
                 </button>
             </div>
 
-            <!-- Audio Toggle & Status Pill -->
+            <!-- Audio Toggle -->
             <div class="flex items-center gap-3">
                 <button id="btnAudio" title="Toggle Web Audio Sonification" class="bg-obsidian-700/70 hover:bg-obsidian-700 border border-obsidian-600 px-3 py-1.5 rounded-xl text-xs font-medium text-cloudyGray flex items-center gap-2 transition-all">
                     <i id="audioIcon" class="fa-solid fa-volume-xmark"></i>
@@ -251,7 +254,7 @@
 
     <!-- Footer -->
     <footer class="w-full text-center py-4 text-xs text-cloudyGray border-t border-obsidian-800 bg-obsidian-900">
-        Unified Sorting Algorithm Visualizer &bull; Bubble Sort &bull; Merge Sort &bull; Quick Sort
+        Unified Sorting Algorithm Visualizer &bull; Bubble Sort &bull; Merge Sort &bull; Quick Sort &bull; Heap Sort
     </footer>
 
     <!-- Application Logic -->
@@ -269,7 +272,6 @@
                 infoDesc: 'Bubble Sort repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. Each pass bubbles the next largest element into its final sorted position.',
                 timeComp: 'O(n²) Avg',
                 spaceComp: 'O(1) Aux',
-                accentClass: 'electricLime',
                 iconClass: 'fa-chart-column',
                 metricTwoLabel: 'Swaps:',
                 showMetricThree: false,
@@ -301,7 +303,6 @@
                 infoDesc: 'Merge Sort divides the array into equal halves until sub-arrays reach size 1, then repeatedly merges adjacent sub-arrays back together in sorted order using temporary auxiliary memory.',
                 timeComp: 'O(n log n)',
                 spaceComp: 'O(n) Aux',
-                accentClass: 'electricViolet',
                 iconClass: 'fa-code-merge',
                 metricTwoLabel: 'Aux Writes:',
                 showMetricThree: true,
@@ -335,7 +336,6 @@
                 infoDesc: 'Selects the rightmost element A[high] as the Pivot, partitions elements smaller than or equal to the pivot to its left, and locks the pivot in its final sorted index before recursing.',
                 timeComp: 'O(n log n) Avg',
                 spaceComp: 'O(log n) Stack',
-                accentClass: 'cyanSub',
                 iconClass: 'fa-bolt',
                 metricTwoLabel: 'Swaps:',
                 showMetricThree: false,
@@ -357,6 +357,39 @@
                     { line: 10, indent: 1, text: 'for j = low to high - 1:' },
                     { line: 11, indent: 2, text: 'if A[j] <= pivot: swap(++i, j)' },
                     { line: 14, indent: 1, text: 'swap(A[i + 1], A[high]); return i+1' }
+                ]
+            },
+            heap: {
+                title: 'HeapSort',
+                badge: 'Max-Heap Binary Tree',
+                subtitle: 'In-place binary heap construction & extraction',
+                pseudoTag: 'Heap Sort',
+                infoTitle: 'How Heap Sort Works',
+                infoDesc: 'Heap Sort first restructures the array into a Max-Heap where every parent node is greater than its children. It then repeatedly swaps the maximum root element with the end of the heap and restores the heap property.',
+                timeComp: 'O(n log n)',
+                spaceComp: 'O(1) Aux',
+                iconClass: 'fa-sitemap',
+                metricTwoLabel: 'Swaps:',
+                showMetricThree: false,
+                legend: [
+                    { color: '#374151', label: 'Outside Heap' },
+                    { color: '#38bdf8', label: 'Active Heap' },
+                    { color: '#a855f7', label: 'Parent Node' },
+                    { color: '#f97316', label: 'Comparing Children' },
+                    { color: '#a3e635', label: 'Swapping' },
+                    { color: '#10b981', label: 'Sorted' }
+                ],
+                pseudocode: [
+                    { line: 1, indent: 0, text: 'heapSort(A, n):' },
+                    { line: 2, indent: 1, text: 'for i = n/2 - 1 down to 0:' },
+                    { line: 3, indent: 2, text: 'heapify(A, n, i)' },
+                    { line: 4, indent: 1, text: 'for end = n - 1 down to 1:' },
+                    { line: 5, indent: 2, text: 'swap(A[0], A[end])' },
+                    { line: 6, indent: 2, text: 'heapify(A, end, 0)' },
+                    { line: 7, indent: 0, text: 'heapify(A, size, i):' },
+                    { line: 8, indent: 1, text: 'largest = max(i, 2i+1, 2i+2)' },
+                    { line: 9, indent: 1, text: 'if largest != i:' },
+                    { line: 10, indent: 2, text: 'swap(A[i], A[largest]); heapify' }
                 ]
             }
         };
@@ -453,7 +486,6 @@
                 this.pause();
                 this.currentAlgo = algoKey;
                 this.applyAlgorithmTheme();
-                // Keep the exact same unsorted array so users can compare algorithms head-to-head!
                 this.resetToOriginal();
             }
 
@@ -464,8 +496,8 @@
                 this.algoTabs.forEach(tab => {
                     const isActive = tab.dataset.algo === this.currentAlgo;
                     tab.className = isActive
-                        ? 'algo-tab px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-electricLime text-obsidian-900 shadow'
-                        : 'algo-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2';
+                        ? 'algo-tab px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-electricLime text-obsidian-900 shadow'
+                        : 'algo-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2';
                 });
 
                 // Update Header & Info Cards
@@ -586,8 +618,10 @@
                     this.steps = this.buildBubbleSortSteps([...this.originalArray]);
                 } else if (this.currentAlgo === 'merge') {
                     this.steps = this.buildMergeSortSteps([...this.originalArray]);
-                } else {
+                } else if (this.currentAlgo === 'quick') {
                     this.steps = this.buildQuickSortSteps([...this.originalArray]);
+                } else {
+                    this.steps = this.buildHeapSortSteps([...this.originalArray]);
                 }
 
                 this.updateTelemetry(0, 0, 0, `Ready (${ALGO_CONFIGS[this.currentAlgo].pseudoTag}). Click Start or Step.`);
@@ -881,6 +915,120 @@
             }
 
             /**
+             * 4. HEAP SORT TRACE GENERATOR
+             */
+            buildHeapSortSteps(arr) {
+                const trace = [];
+                const sorted = new Set();
+                let comps = 0, swaps = 0;
+                const n = arr.length;
+
+                const heapify = (heapSize, rootIdx) => {
+                    let largest = rootIdx;
+                    const left = 2 * rootIdx + 1;
+                    const right = 2 * rootIdx + 2;
+
+                    trace.push({
+                        array: [...arr],
+                        range: [0, heapSize - 1],
+                        pivot: rootIdx,
+                        sorted: new Set(sorted),
+                        comps, m2: swaps, m3: 0,
+                        line: 7,
+                        status: `Heapifying subtree at parent A[${rootIdx}] = ${arr[rootIdx]} (heap size: ${heapSize})`
+                    });
+
+                    if (left < heapSize) {
+                        comps++;
+                        trace.push({
+                            array: [...arr],
+                            range: [0, heapSize - 1],
+                            pivot: rootIdx,
+                            comparing: [largest, left],
+                            sorted: new Set(sorted),
+                            comps, m2: swaps, m3: 0,
+                            line: 8,
+                            soundVal: arr[left],
+                            status: `Comparing parent/largest A[${largest}] (${arr[largest]}) with left child A[${left}] (${arr[left]})`
+                        });
+                        if (arr[left] > arr[largest]) {
+                            largest = left;
+                        }
+                    }
+
+                    if (right < heapSize) {
+                        comps++;
+                        trace.push({
+                            array: [...arr],
+                            range: [0, heapSize - 1],
+                            pivot: rootIdx,
+                            comparing: [largest, right],
+                            sorted: new Set(sorted),
+                            comps, m2: swaps, m3: 0,
+                            line: 8,
+                            soundVal: arr[right],
+                            status: `Comparing largest A[${largest}] (${arr[largest]}) with right child A[${right}] (${arr[right]})`
+                        });
+                        if (arr[right] > arr[largest]) {
+                            largest = right;
+                        }
+                    }
+
+                    if (largest !== rootIdx) {
+                        [arr[rootIdx], arr[largest]] = [arr[largest], arr[rootIdx]];
+                        swaps++;
+                        trace.push({
+                            array: [...arr],
+                            range: [0, heapSize - 1],
+                            swapping: [rootIdx, largest],
+                            sorted: new Set(sorted),
+                            comps, m2: swaps, m3: 0,
+                            line: 10,
+                            soundVal: arr[rootIdx],
+                            soundType: 'triangle',
+                            status: `Swapped parent A[${rootIdx}] and larger child A[${largest}]`
+                        });
+                        heapify(heapSize, largest);
+                    }
+                };
+
+                // Phase 1: Build Max-Heap
+                for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+                    heapify(n, i);
+                }
+
+                // Phase 2: Extract max root one by one
+                for (let end = n - 1; end > 0; end--) {
+                    [arr[0], arr[end]] = [arr[end], arr[0]];
+                    swaps++;
+                    sorted.add(end);
+                    trace.push({
+                        array: [...arr],
+                        range: [0, end - 1],
+                        swapping: [0, end],
+                        sorted: new Set(sorted),
+                        comps, m2: swaps, m3: 0,
+                        line: 5,
+                        soundVal: arr[end],
+                        soundType: 'triangle',
+                        status: `Extracted max root (${arr[end]}) to sorted position ${end}`
+                    });
+
+                    heapify(end, 0);
+                }
+
+                sorted.add(0);
+                trace.push({
+                    array: [...arr],
+                    sorted: new Set(sorted),
+                    comps, m2: swaps, m3: 0,
+                    line: null,
+                    status: `Heap Sort completed in ${comps} comparisons and ${swaps} swaps!`
+                });
+                return trace;
+            }
+
+            /**
              * Playback Loop Controls
              */
             async start() {
@@ -995,12 +1143,12 @@
                     const heightPct = Math.max(10, Math.round((val / maxValue) * 100));
                     bar.style.height = `${heightPct}%`;
 
-                    // Color Priority System across all 3 algorithms
+                    // Color Priority System across all 4 algorithms
                     if (sorted.has(idx)) {
                         bar.style.backgroundColor = this.currentAlgo === 'quick' ? '#a3e635' : '#10b981';
                         bar.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.35)';
                     } else if (idx === pivot) {
-                        bar.style.backgroundColor = '#a855f7'; // Pivot Violet
+                        bar.style.backgroundColor = '#a855f7'; // Pivot / Heap Parent Violet
                         bar.style.boxShadow = '0 0 15px rgba(168, 85, 247, 0.65)';
                     } else if (swapping.includes(idx)) {
                         bar.style.backgroundColor = '#a3e635'; // Swap Lime
@@ -1018,7 +1166,7 @@
                     } else if (rightSub.includes(idx)) {
                         bar.style.backgroundColor = '#22c55e'; // Merge Right Green
                     } else if (range && idx >= range[0] && idx <= range[1]) {
-                        bar.style.backgroundColor = '#60a5fa'; // Active Subarray Range
+                        bar.style.backgroundColor = this.currentAlgo === 'heap' ? '#38bdf8' : '#60a5fa';
                     } else {
                         bar.style.backgroundColor = this.currentAlgo === 'quick' ? '#38bdf8' : '#374151';
                     }
