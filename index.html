@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Sorting Algorithm Visualizer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: {
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                            600: '#374151',
+                        },
+                        electricLime: '#a3e635',
+                        blazeOrange: '#f97316',
+                        electricViolet: '#8b5cf6',
+                        cyanSub: '#06b6d4',
+                        greenSub: '#22c55e',
+                        cloudyGray: '#9ca3af',
+                    },
+                    fontFamily: {
+                        display: ['Comfortaa', 'cursive', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+        .bar-transition {
+            transition: height 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+                        background-color 0.14s ease,
+                        transform 0.14s ease,
+                        box-shadow 0.14s ease;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-electricLime selection:text-obsidian-900">
+
+    <!-- Header & Algorithm Switcher -->
+    <header class="w-full bg-obsidian-800/85 backdrop-blur-md border-b border-obsidian-600/50 sticky top-0 z-30 px-4 sm:px-8 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
+            
+            <!-- Brand Title -->
+            <div class="flex items-center space-x-3">
+                <div id="brandIconBox" class="w-10 h-10 rounded-xl bg-gradient-to-br from-electricLime to-emerald-600 flex items-center justify-center shadow-lg transition-all duration-300">
+                    <i id="brandIcon" class="fa-solid fa-chart-column text-obsidian-900 text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-xl tracking-tight text-white flex items-center gap-2">
+                        <span id="headerTitle">BubbleSort</span>
+                        <span id="headerBadge" class="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-electricLime/10 text-electricLime border border-electricLime/30">O(n²)</span>
+                    </h1>
+                    <p id="headerSubtitle" class="text-xs text-cloudyGray">Interactive algorithmic learning & simulation platform</p>
+                </div>
+            </div>
+
+            <!-- Algorithm Switcher Tabs -->
+            <div class="flex items-center bg-obsidian-900/90 p-1.5 rounded-xl border border-obsidian-700 shadow-inner">
+                <button data-algo="bubble" class="algo-tab px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-electricLime text-obsidian-900 shadow">
+                    <i class="fa-solid fa-chart-column"></i> Bubble Sort
+                </button>
+                <button data-algo="merge" class="algo-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-code-merge"></i> Merge Sort
+                </button>
+                <button data-algo="quick" class="algo-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> Quick Sort
+                </button>
+            </div>
+
+            <!-- Audio Toggle & Status Pill -->
+            <div class="flex items-center gap-3">
+                <button id="btnAudio" title="Toggle Web Audio Sonification" class="bg-obsidian-700/70 hover:bg-obsidian-700 border border-obsidian-600 px-3 py-1.5 rounded-xl text-xs font-medium text-cloudyGray flex items-center gap-2 transition-all">
+                    <i id="audioIcon" class="fa-solid fa-volume-xmark"></i>
+                    <span id="audioLabel">Sound Off</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+        
+        <!-- Left 3 Columns: Controls, Telemetry & Visualization -->
+        <div class="lg:col-span-3 flex flex-col gap-6">
+            
+            <!-- Controls Panel -->
+            <div class="bg-obsidian-800/90 border border-obsidian-600/60 rounded-2xl p-4 sm:p-6 shadow-xl backdrop-blur">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-center">
+                    
+                    <!-- Array Size Slider -->
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between text-xs font-medium text-cloudyGray">
+                            <span>Array Size</span>
+                            <span id="sizeVal" class="text-electricLime font-mono font-bold">24</span>
+                        </div>
+                        <input id="sizeSlider" type="range" min="5" max="60" value="24" 
+                            class="w-full accent-electricLime bg-obsidian-700 rounded-lg appearance-none h-2 cursor-pointer">
+                    </div>
+
+                    <!-- Speed Slider -->
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between text-xs font-medium text-cloudyGray">
+                            <span>Speed</span>
+                            <span id="speedVal" class="text-blazeOrange font-mono font-bold">Medium</span>
+                        </div>
+                        <input id="speedSlider" type="range" min="1" max="100" value="60" 
+                            class="w-full accent-blazeOrange bg-obsidian-700 rounded-lg appearance-none h-2 cursor-pointer">
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button id="btnGenerate" class="w-full py-2.5 px-4 bg-obsidian-700 hover:bg-obsidian-600 text-white font-medium rounded-xl border border-obsidian-600 transition-all shadow hover:shadow-lg flex items-center justify-center gap-2 group text-sm">
+                        <i class="fa-solid fa-shuffle text-cyanSub group-hover:rotate-180 transition-transform duration-500"></i>
+                        New Array
+                    </button>
+
+                    <!-- Reset Button -->
+                    <button id="btnReset" class="w-full py-2.5 px-4 bg-obsidian-700 hover:bg-obsidian-600 text-white font-medium rounded-xl border border-obsidian-600 transition-all shadow hover:shadow-lg flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-arrow-rotate-left text-cloudyGray"></i>
+                        Reset State
+                    </button>
+                </div>
+
+                <!-- Playback Control Bar & Live Telemetry -->
+                <div class="mt-6 pt-4 border-t border-obsidian-700 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-2">
+                        <button id="btnPlay" class="py-2.5 px-6 bg-gradient-to-r from-electricLime to-emerald-500 hover:opacity-90 text-obsidian-900 font-bold rounded-xl shadow-lg transition-all flex items-center gap-2 text-sm">
+                            <i id="playIcon" class="fa-solid fa-play"></i>
+                            <span id="playText">Start</span>
+                        </button>
+                        <button id="btnStep" class="py-2.5 px-4 bg-obsidian-700 hover:bg-obsidian-600 text-white font-medium rounded-xl border border-obsidian-600 transition-all shadow flex items-center gap-2 text-sm">
+                            <i class="fa-solid fa-forward-step text-electricViolet"></i>
+                            Step
+                        </button>
+                    </div>
+
+                    <!-- Live Metrics Dashboard -->
+                    <div class="flex flex-wrap items-center gap-3 text-xs">
+                        <div class="bg-obsidian-900/80 border border-obsidian-700 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                            <span class="text-cloudyGray">Comparisons:</span>
+                            <span id="compCount" class="font-mono font-bold text-blazeOrange text-sm">0</span>
+                        </div>
+                        <div id="metricTwoBox" class="bg-obsidian-900/80 border border-obsidian-700 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                            <span id="metricTwoLabel" class="text-cloudyGray">Swaps:</span>
+                            <span id="metricTwoVal" class="font-mono font-bold text-electricLime text-sm">0</span>
+                        </div>
+                        <div id="metricThreeBox" class="hidden bg-obsidian-900/80 border border-obsidian-700 px-3 py-1.5 rounded-lg items-center gap-2">
+                            <span class="text-cloudyGray">Aux Reads:</span>
+                            <span id="metricThreeVal" class="font-mono font-bold text-cyanSub text-sm">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Operation Banner -->
+            <div class="bg-obsidian-800/80 border border-obsidian-700/80 rounded-xl px-4 py-2.5 flex items-center gap-3 text-xs font-mono shadow">
+                <span class="w-2 h-2 rounded-full bg-electricLime animate-pulse shrink-0"></span>
+                <span id="statusText" class="text-gray-200 truncate">Ready. Click Start or Step to begin sorting.</span>
+            </div>
+
+            <!-- Visualization Canvas / Bar Chart Container -->
+            <div class="bg-obsidian-800/90 border border-obsidian-600/60 rounded-2xl p-6 shadow-xl backdrop-blur flex flex-col justify-end min-h-[380px] sm:min-h-[440px] relative overflow-hidden">
+                
+                <!-- Background Grid Lines -->
+                <div class="absolute inset-0 pointer-events-none flex flex-col justify-between p-6 opacity-20">
+                    <div class="border-b border-dashed border-cloudyGray w-full"></div>
+                    <div class="border-b border-dashed border-cloudyGray w-full"></div>
+                    <div class="border-b border-dashed border-cloudyGray w-full"></div>
+                    <div class="border-b border-dashed border-cloudyGray w-full"></div>
+                </div>
+
+                <!-- Dynamic Legend -->
+                <div id="legendContainer" class="absolute top-4 left-6 z-10 hidden sm:flex flex-wrap items-center gap-3 text-[11px] bg-obsidian-900/80 backdrop-blur px-3.5 py-1.5 rounded-lg border border-obsidian-700/70">
+                    <!-- Populated dynamically per algorithm -->
+                </div>
+
+                <!-- Bars Container -->
+                <div id="barsContainer" class="w-full h-72 sm:h-80 flex items-end justify-center gap-1 sm:gap-2 z-10 px-2">
+                    <!-- Dynamic bars inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Synced Pseudocode & Algorithm Explainer -->
+        <div class="lg:col-span-1 flex flex-col gap-6">
+            
+            <!-- Pseudocode Panel -->
+            <div class="bg-obsidian-800/90 border border-obsidian-600/60 rounded-2xl p-5 shadow-xl backdrop-blur flex flex-col gap-3">
+                <div class="flex items-center justify-between pb-2 border-b border-obsidian-700">
+                    <h2 class="font-display font-bold text-sm tracking-wide text-white flex items-center gap-2">
+                        <i class="fa-solid fa-code text-electricLime" id="codeIcon"></i> Pseudocode
+                    </h2>
+                    <span id="pseudoTag" class="text-[10px] font-mono text-cloudyGray bg-obsidian-700 px-2 py-0.5 rounded">Bubble Sort</span>
+                </div>
+                
+                <div id="pseudocodeBox" class="font-mono text-xs space-y-1 text-cloudyGray bg-obsidian-900/70 p-3.5 rounded-xl border border-obsidian-700/80 overflow-x-auto leading-relaxed">
+                    <!-- Populated dynamically per algorithm -->
+                </div>
+            </div>
+
+            <!-- Algorithm Description Panel -->
+            <div class="bg-obsidian-800/90 border border-obsidian-600/60 rounded-2xl p-5 shadow-xl backdrop-blur flex flex-col gap-3">
+                <h3 class="font-display font-bold text-sm tracking-wide text-white flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb text-blazeOrange"></i> <span id="infoTitle">How Bubble Sort Works</span>
+                </h3>
+                <p id="infoDesc" class="text-xs text-cloudyGray leading-relaxed">
+                    Bubble Sort repeatedly steps through the array, compares adjacent elements, and swaps them if they are in the wrong order.
+                </p>
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-obsidian-700 text-xs">
+                    <div class="bg-obsidian-900/60 p-2.5 rounded-xl border border-obsidian-700">
+                        <span class="text-cloudyGray block text-[10px]">Time Complexity</span>
+                        <span id="timeCompVal" class="font-mono font-bold text-white">O(n²) Avg</span>
+                    </div>
+                    <div class="bg-obsidian-900/60 p-2.5 rounded-xl border border-obsidian-700">
+                        <span class="text-cloudyGray block text-[10px]">Space Complexity</span>
+                        <span id="spaceCompVal" class="font-mono font-bold text-white">O(1) Aux</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-4 text-xs text-cloudyGray border-t border-obsidian-800 bg-obsidian-900">
+        Unified Sorting Algorithm Visualizer &bull; Bubble Sort &bull; Merge Sort &bull; Quick Sort
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        /**
+         * Algorithm Metadata & Configurations
+         */
+        const ALGO_CONFIGS = {
+            bubble: {
+                title: 'BubbleSort',
+                badge: 'O(n²) Adjacent',
+                subtitle: 'Adjacent comparison & bubbling simulation',
+                pseudoTag: 'Bubble Sort',
+                infoTitle: 'How Bubble Sort Works',
+                infoDesc: 'Bubble Sort repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. Each pass bubbles the next largest element into its final sorted position.',
+                timeComp: 'O(n²) Avg',
+                spaceComp: 'O(1) Aux',
+                accentClass: 'electricLime',
+                iconClass: 'fa-chart-column',
+                metricTwoLabel: 'Swaps:',
+                showMetricThree: false,
+                legend: [
+                    { color: '#374151', label: 'Unsorted' },
+                    { color: '#f97316', label: 'Comparing' },
+                    { color: '#a3e635', label: 'Swapping' },
+                    { color: '#10b981', label: 'Sorted' }
+                ],
+                pseudocode: [
+                    { line: 1, indent: 0, text: 'procedure bubbleSort(A):' },
+                    { line: 2, indent: 1, text: 'n = length(A)' },
+                    { line: 3, indent: 1, text: 'repeat' },
+                    { line: 4, indent: 2, text: 'swapped = false' },
+                    { line: 5, indent: 2, text: 'for i = 1 to n - 1 do' },
+                    { line: 6, indent: 3, text: 'if A[i-1] > A[i] then' },
+                    { line: 7, indent: 4, text: 'swap(A[i-1], A[i])' },
+                    { line: 8, indent: 4, text: 'swapped = true' },
+                    { line: 9, indent: 2, text: 'n = n - 1' },
+                    { line: 10, indent: 1, text: 'until not swapped' }
+                ]
+            },
+            merge: {
+                title: 'MergeSort',
+                badge: 'Divide & Conquer',
+                subtitle: 'Recursive splitting & auxiliary array merging',
+                pseudoTag: 'Merge Sort',
+                infoTitle: 'How Merge Sort Works',
+                infoDesc: 'Merge Sort divides the array into equal halves until sub-arrays reach size 1, then repeatedly merges adjacent sub-arrays back together in sorted order using temporary auxiliary memory.',
+                timeComp: 'O(n log n)',
+                spaceComp: 'O(n) Aux',
+                accentClass: 'electricViolet',
+                iconClass: 'fa-code-merge',
+                metricTwoLabel: 'Aux Writes:',
+                showMetricThree: true,
+                legend: [
+                    { color: '#374151', label: 'Normal' },
+                    { color: '#06b6d4', label: 'Left Subarray' },
+                    { color: '#22c55e', label: 'Right Subarray' },
+                    { color: '#f97316', label: 'Comparing' },
+                    { color: '#8b5cf6', label: 'Writing Back' },
+                    { color: '#10b981', label: 'Sorted' }
+                ],
+                pseudocode: [
+                    { line: 1, indent: 0, text: 'mergeSort(A, left, right):' },
+                    { line: 2, indent: 1, text: 'if left < right then' },
+                    { line: 3, indent: 2, text: 'mid = (left + right) / 2' },
+                    { line: 4, indent: 2, text: 'mergeSort(A, left, mid)' },
+                    { line: 5, indent: 2, text: 'mergeSort(A, mid+1, right)' },
+                    { line: 6, indent: 2, text: 'merge(A, left, mid, right)' },
+                    { line: 7, indent: 0, text: 'merge(A, left, mid, right):' },
+                    { line: 8, indent: 1, text: 'copy subarrays to temp aux' },
+                    { line: 9, indent: 1, text: 'while i <= mid and j <= right:' },
+                    { line: 10, indent: 2, text: 'compare & write smaller back' }
+                ]
+            },
+            quick: {
+                title: 'QuickSort',
+                badge: 'Lomuto Partition',
+                subtitle: 'In-place pivot partitioning engine',
+                pseudoTag: 'Quick Sort',
+                infoTitle: 'How Quick Sort Works',
+                infoDesc: 'Selects the rightmost element A[high] as the Pivot, partitions elements smaller than or equal to the pivot to its left, and locks the pivot in its final sorted index before recursing.',
+                timeComp: 'O(n log n) Avg',
+                spaceComp: 'O(log n) Stack',
+                accentClass: 'cyanSub',
+                iconClass: 'fa-bolt',
+                metricTwoLabel: 'Swaps:',
+                showMetricThree: false,
+                legend: [
+                    { color: '#38bdf8', label: 'Unsorted' },
+                    { color: '#60a5fa', label: 'Active Range' },
+                    { color: '#a855f7', label: 'Pivot' },
+                    { color: '#f97316', label: 'Comparing / Swapping' },
+                    { color: '#a3e635', label: 'Sorted' }
+                ],
+                pseudocode: [
+                    { line: 1, indent: 0, text: 'quickSort(A, low, high):' },
+                    { line: 2, indent: 1, text: 'if low < high:' },
+                    { line: 3, indent: 2, text: 'p = partition(A, low, high)' },
+                    { line: 4, indent: 2, text: 'quickSort(A, low, p - 1)' },
+                    { line: 5, indent: 2, text: 'quickSort(A, p + 1, high)' },
+                    { line: 7, indent: 0, text: 'partition(A, low, high):' },
+                    { line: 8, indent: 1, text: 'pivot = A[high]; i = low - 1' },
+                    { line: 10, indent: 1, text: 'for j = low to high - 1:' },
+                    { line: 11, indent: 2, text: 'if A[j] <= pivot: swap(++i, j)' },
+                    { line: 14, indent: 1, text: 'swap(A[i + 1], A[high]); return i+1' }
+                ]
+            }
+        };
+
+        /**
+         * Unified Sorting Engine
+         */
+        class UnifiedSortingVisualizer {
+            constructor() {
+                this.currentAlgo = 'bubble';
+                this.array = [];
+                this.originalArray = [];
+                this.steps = [];
+                this.stepIndex = 0;
+
+                this.isPlaying = false;
+                this.runToken = 0;
+                this.audioEnabled = false;
+                this.audioCtx = null;
+
+                this.cacheDOM();
+                this.bindEvents();
+                this.applyAlgorithmTheme();
+                this.generateNewArray();
+            }
+
+            cacheDOM() {
+                this.algoTabs = document.querySelectorAll('.algo-tab');
+                this.sizeSlider = document.getElementById('sizeSlider');
+                this.speedSlider = document.getElementById('speedSlider');
+                this.sizeVal = document.getElementById('sizeVal');
+                this.speedVal = document.getElementById('speedVal');
+
+                this.btnGenerate = document.getElementById('btnGenerate');
+                this.btnReset = document.getElementById('btnReset');
+                this.btnPlay = document.getElementById('btnPlay');
+                this.btnStep = document.getElementById('btnStep');
+                this.btnAudio = document.getElementById('btnAudio');
+
+                this.compCount = document.getElementById('compCount');
+                this.metricTwoLabel = document.getElementById('metricTwoLabel');
+                this.metricTwoVal = document.getElementById('metricTwoVal');
+                this.metricThreeBox = document.getElementById('metricThreeBox');
+                this.metricThreeVal = document.getElementById('metricThreeVal');
+
+                this.statusText = document.getElementById('statusText');
+                this.barsContainer = document.getElementById('barsContainer');
+                this.legendContainer = document.getElementById('legendContainer');
+                this.pseudocodeBox = document.getElementById('pseudocodeBox');
+            }
+
+            bindEvents() {
+                this.algoTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const selected = tab.dataset.algo;
+                        if (selected !== this.currentAlgo) {
+                            this.switchAlgorithm(selected);
+                        }
+                    });
+                });
+
+                this.sizeSlider.addEventListener('input', (e) => {
+                    this.sizeVal.textContent = e.target.value;
+                    if (!this.isPlaying) {
+                        this.generateNewArray();
+                    }
+                });
+
+                this.speedSlider.addEventListener('input', () => this.updateSpeedLabel());
+
+                this.btnGenerate.addEventListener('click', () => {
+                    this.pause();
+                    this.generateNewArray();
+                });
+
+                this.btnReset.addEventListener('click', () => {
+                    this.pause();
+                    this.resetToOriginal();
+                });
+
+                this.btnPlay.addEventListener('click', () => {
+                    this.isPlaying ? this.pause() : this.start();
+                });
+
+                this.btnStep.addEventListener('click', () => {
+                    if (this.isPlaying) this.pause();
+                    this.stepForward();
+                });
+
+                this.btnAudio.addEventListener('click', () => this.toggleAudio());
+            }
+
+            switchAlgorithm(algoKey) {
+                this.pause();
+                this.currentAlgo = algoKey;
+                this.applyAlgorithmTheme();
+                // Keep the exact same unsorted array so users can compare algorithms head-to-head!
+                this.resetToOriginal();
+            }
+
+            applyAlgorithmTheme() {
+                const cfg = ALGO_CONFIGS[this.currentAlgo];
+
+                // Update Tab Styles
+                this.algoTabs.forEach(tab => {
+                    const isActive = tab.dataset.algo === this.currentAlgo;
+                    tab.className = isActive
+                        ? 'algo-tab px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-electricLime text-obsidian-900 shadow'
+                        : 'algo-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2';
+                });
+
+                // Update Header & Info Cards
+                document.getElementById('headerTitle').textContent = cfg.title;
+                document.getElementById('headerBadge').textContent = cfg.badge;
+                document.getElementById('headerSubtitle').textContent = cfg.subtitle;
+                document.getElementById('pseudoTag').textContent = cfg.pseudoTag;
+                document.getElementById('infoTitle').textContent = cfg.infoTitle;
+                document.getElementById('infoDesc').textContent = cfg.infoDesc;
+                document.getElementById('timeCompVal').textContent = cfg.timeComp;
+                document.getElementById('spaceCompVal').textContent = cfg.spaceComp;
+
+                const brandIcon = document.getElementById('brandIcon');
+                brandIcon.className = `fa-solid ${cfg.iconClass} text-obsidian-900 text-lg`;
+
+                // Update Metrics Labels
+                this.metricTwoLabel.textContent = cfg.metricTwoLabel;
+                if (cfg.showMetricThree) {
+                    this.metricThreeBox.classList.remove('hidden');
+                    this.metricThreeBox.classList.add('flex');
+                } else {
+                    this.metricThreeBox.classList.add('hidden');
+                    this.metricThreeBox.classList.remove('flex');
+                }
+
+                // Render Legend
+                this.legendContainer.innerHTML = cfg.legend.map(item => `
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${item.color}"></span>
+                        <span class="text-cloudyGray font-medium">${item.label}</span>
+                    </div>
+                `).join('');
+
+                // Render Pseudocode
+                this.pseudocodeBox.innerHTML = cfg.pseudocode.map(row => `
+                    <div data-line="${row.line}" style="padding-left: ${row.indent * 12 + 8}px" class="code-line transition-colors duration-150 py-1 pr-2 rounded">
+                        ${row.text}
+                    </div>
+                `).join('');
+
+                this.updateSpeedLabel();
+            }
+
+            updateSpeedLabel() {
+                const val = parseInt(this.speedSlider.value, 10);
+                if (val < 30) this.speedVal.textContent = 'Slow';
+                else if (val < 75) this.speedVal.textContent = 'Medium';
+                else this.speedVal.textContent = 'Fast';
+            }
+
+            getDelayMs() {
+                const val = parseInt(this.speedSlider.value, 10);
+                return Math.floor(Math.max(8, 450 - val * 4.3));
+            }
+
+            toggleAudio() {
+                this.audioEnabled = !this.audioEnabled;
+                if (this.audioEnabled && !this.audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) this.audioCtx = new AudioContext();
+                }
+                if (this.audioEnabled && this.audioCtx && this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume();
+                }
+
+                const icon = document.getElementById('audioIcon');
+                const label = document.getElementById('audioLabel');
+                if (this.audioEnabled) {
+                    icon.className = 'fa-solid fa-volume-high text-electricLime';
+                    label.textContent = 'Sound On';
+                    this.btnAudio.classList.add('border-electricLime/50', 'text-white');
+                } else {
+                    icon.className = 'fa-solid fa-volume-xmark';
+                    label.textContent = 'Sound Off';
+                    this.btnAudio.classList.remove('border-electricLime/50', 'text-white');
+                }
+            }
+
+            playTone(value, type = 'sine') {
+                if (!this.audioEnabled || !this.audioCtx || value === undefined) return;
+                try {
+                    const now = this.audioCtx.currentTime;
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    const freq = 220 + (value / 100) * 660;
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, now);
+
+                    const duration = Math.min(0.08, Math.max(0.025, this.getDelayMs() / 1200));
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + duration);
+                } catch (e) {}
+            }
+
+            generateNewArray() {
+                const size = parseInt(this.sizeSlider.value, 10);
+                this.originalArray = Array.from({ length: size }, () => Math.floor(Math.random() * 90) + 10);
+                this.resetToOriginal();
+            }
+
+            resetToOriginal() {
+                this.runToken++;
+                this.isPlaying = false;
+                this.sizeSlider.disabled = false;
+                this.btnGenerate.disabled = false;
+                this.btnStep.disabled = false;
+                this.updatePlayButtonUI();
+
+                this.array = [...this.originalArray];
+                this.stepIndex = 0;
+
+                if (this.currentAlgo === 'bubble') {
+                    this.steps = this.buildBubbleSortSteps([...this.originalArray]);
+                } else if (this.currentAlgo === 'merge') {
+                    this.steps = this.buildMergeSortSteps([...this.originalArray]);
+                } else {
+                    this.steps = this.buildQuickSortSteps([...this.originalArray]);
+                }
+
+                this.updateTelemetry(0, 0, 0, `Ready (${ALGO_CONFIGS[this.currentAlgo].pseudoTag}). Click Start or Step.`);
+                this.highlightCodeLine(null);
+                this.renderBars({ array: this.array, sorted: new Set() });
+            }
+
+            /**
+             * 1. BUBBLE SORT TRACE GENERATOR
+             */
+            buildBubbleSortSteps(arr) {
+                const trace = [];
+                const sorted = new Set();
+                let comps = 0, swaps = 0;
+                const n = arr.length;
+
+                for (let pass = 0; pass < n; pass++) {
+                    let swapped = false;
+                    for (let i = 0; i < n - pass - 1; i++) {
+                        comps++;
+                        trace.push({
+                            array: [...arr],
+                            comparing: [i, i + 1],
+                            swapping: [],
+                            sorted: new Set(sorted),
+                            comps, m2: swaps, m3: 0,
+                            line: 6,
+                            soundVal: arr[i + 1],
+                            status: `Comparing A[${i}] (${arr[i]}) and A[${i + 1}] (${arr[i + 1]})`
+                        });
+
+                        if (arr[i] > arr[i + 1]) {
+                            [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+                            swapped = true;
+                            swaps++;
+                            trace.push({
+                                array: [...arr],
+                                comparing: [],
+                                swapping: [i, i + 1],
+                                sorted: new Set(sorted),
+                                comps, m2: swaps, m3: 0,
+                                line: 7,
+                                soundVal: arr[i],
+                                soundType: 'triangle',
+                                status: `Swapped ${arr[i]} and ${arr[i + 1]}`
+                            });
+                        }
+                    }
+                    sorted.add(n - pass - 1);
+                    if (!swapped) {
+                        for (let k = 0; k < n; k++) sorted.add(k);
+                        break;
+                    }
+                }
+
+                for (let k = 0; k < n; k++) sorted.add(k);
+                trace.push({
+                    array: [...arr],
+                    sorted: new Set(sorted),
+                    comps, m2: swaps, m3: 0,
+                    line: null,
+                    status: `Bubble Sort completed in ${comps} comparisons and ${swaps} swaps!`
+                });
+                return trace;
+            }
+
+            /**
+             * 2. MERGE SORT TRACE GENERATOR
+             */
+            buildMergeSortSteps(arr) {
+                const trace = [];
+                const aux = [...arr];
+                const sorted = new Set();
+                let comps = 0, writes = 0, reads = 0;
+
+                const merge = (l, m, r) => {
+                    const leftSub = [], rightSub = [];
+                    for (let x = l; x <= m; x++) leftSub.push(x);
+                    for (let x = m + 1; x <= r; x++) rightSub.push(x);
+
+                    for (let idx = l; idx <= r; idx++) {
+                        aux[idx] = arr[idx];
+                        reads++;
+                    }
+                    trace.push({
+                        array: [...arr],
+                        leftSub, rightSub,
+                        sorted: new Set(sorted),
+                        comps, m2: writes, m3: reads,
+                        line: 8,
+                        status: `Merging subarrays [${l}..${m}] and [${m + 1}..${r}]`
+                    });
+
+                    let i = l, j = m + 1, k = l;
+                    while (i <= m && j <= r) {
+                        comps++;
+                        reads += 2;
+                        trace.push({
+                            array: [...arr],
+                            leftSub, rightSub,
+                            comparing: [i, j],
+                            sorted: new Set(sorted),
+                            comps, m2: writes, m3: reads,
+                            line: 10,
+                            soundVal: aux[i],
+                            status: `Comparing aux[${i}] (${aux[i]}) and aux[${j}] (${aux[j]})`
+                        });
+
+                        if (aux[i] <= aux[j]) {
+                            arr[k] = aux[i++];
+                        } else {
+                            arr[k] = aux[j++];
+                        }
+                        writes++;
+                        trace.push({
+                            array: [...arr],
+                            leftSub, rightSub,
+                            writing: [k],
+                            sorted: new Set(sorted),
+                            comps, m2: writes, m3: reads,
+                            line: 10,
+                            soundVal: arr[k],
+                            soundType: 'triangle',
+                            status: `Writing ${arr[k]} into index ${k}`
+                        });
+                        if (l === 0 && r === arr.length - 1) sorted.add(k);
+                        k++;
+                    }
+
+                    while (i <= m) {
+                        arr[k] = aux[i++];
+                        writes++;
+                        trace.push({
+                            array: [...arr],
+                            leftSub, rightSub,
+                            writing: [k],
+                            sorted: new Set(sorted),
+                            comps, m2: writes, m3: reads,
+                            line: 10,
+                            soundVal: arr[k],
+                            status: `Flushing remaining left value ${arr[k]} to index ${k}`
+                        });
+                        if (l === 0 && r === arr.length - 1) sorted.add(k);
+                        k++;
+                    }
+
+                    while (j <= r) {
+                        arr[k] = aux[j++];
+                        writes++;
+                        trace.push({
+                            array: [...arr],
+                            leftSub, rightSub,
+                            writing: [k],
+                            sorted: new Set(sorted),
+                            comps, m2: writes, m3: reads,
+                            line: 10,
+                            soundVal: arr[k],
+                            status: `Flushing remaining right value ${arr[k]} to index ${k}`
+                        });
+                        if (l === 0 && r === arr.length - 1) sorted.add(k);
+                        k++;
+                    }
+                };
+
+                const mergeSort = (l, r) => {
+                    if (l >= r) return;
+                    const m = Math.floor(l + (r - l) / 2);
+                    trace.push({
+                        array: [...arr],
+                        range: [l, r],
+                        sorted: new Set(sorted),
+                        comps, m2: writes, m3: reads,
+                        line: 3,
+                        status: `Dividing range [${l}..${r}] at mid = ${m}`
+                    });
+                    mergeSort(l, m);
+                    mergeSort(m + 1, r);
+                    merge(l, m, r);
+                };
+
+                mergeSort(0, arr.length - 1);
+                for (let k = 0; k < arr.length; k++) sorted.add(k);
+                trace.push({
+                    array: [...arr],
+                    sorted: new Set(sorted),
+                    comps, m2: writes, m3: reads,
+                    line: null,
+                    status: `Merge Sort completed in ${comps} comparisons, ${reads} reads, and ${writes} writes!`
+                });
+                return trace;
+            }
+
+            /**
+             * 3. QUICK SORT (LOMUTO) TRACE GENERATOR
+             */
+            buildQuickSortSteps(arr) {
+                const trace = [];
+                const sorted = new Set();
+                let comps = 0, swaps = 0;
+
+                const partition = (low, high) => {
+                    const pivotVal = arr[high];
+                    trace.push({
+                        array: [...arr],
+                        range: [low, high],
+                        pivot: high,
+                        sorted: new Set(sorted),
+                        comps, m2: swaps, m3: 0,
+                        line: 8,
+                        status: `Selected Pivot A[${high}] = ${pivotVal} for range [${low}..${high}]`
+                    });
+
+                    let i = low - 1;
+                    for (let j = low; j < high; j++) {
+                        comps++;
+                        trace.push({
+                            array: [...arr],
+                            range: [low, high],
+                            pivot: high,
+                            comparing: [j, high],
+                            sorted: new Set(sorted),
+                            comps, m2: swaps, m3: 0,
+                            line: 11,
+                            soundVal: arr[j],
+                            status: `Comparing A[${j}] (${arr[j]}) with Pivot (${pivotVal})`
+                        });
+
+                        if (arr[j] <= pivotVal) {
+                            i++;
+                            if (i !== j) {
+                                [arr[i], arr[j]] = [arr[j], arr[i]];
+                                swaps++;
+                                trace.push({
+                                    array: [...arr],
+                                    range: [low, high],
+                                    pivot: high,
+                                    swapping: [i, j],
+                                    sorted: new Set(sorted),
+                                    comps, m2: swaps, m3: 0,
+                                    line: 11,
+                                    soundVal: arr[i],
+                                    soundType: 'triangle',
+                                    status: `${arr[i]} ≤ ${pivotVal}: Swapped A[${i}] and A[${j}]`
+                                });
+                            }
+                        }
+                    }
+
+                    const pivotFinal = i + 1;
+                    if (pivotFinal !== high) {
+                        [arr[pivotFinal], arr[high]] = [arr[high], arr[pivotFinal]];
+                        swaps++;
+                    }
+                    sorted.add(pivotFinal);
+
+                    trace.push({
+                        array: [...arr],
+                        range: [low, high],
+                        pivot: pivotFinal,
+                        sorted: new Set(sorted),
+                        comps, m2: swaps, m3: 0,
+                        line: 14,
+                        soundVal: arr[pivotFinal],
+                        soundType: 'triangle',
+                        status: `Locked Pivot (${pivotVal}) at final sorted index ${pivotFinal}`
+                    });
+
+                    return pivotFinal;
+                };
+
+                const quickSort = (low, high) => {
+                    if (low < high) {
+                        const p = partition(low, high);
+                        quickSort(low, p - 1);
+                        quickSort(p + 1, high);
+                    } else if (low === high && low >= 0 && low < arr.length) {
+                        sorted.add(low);
+                    }
+                };
+
+                quickSort(0, arr.length - 1);
+                for (let k = 0; k < arr.length; k++) sorted.add(k);
+                trace.push({
+                    array: [...arr],
+                    sorted: new Set(sorted),
+                    comps, m2: swaps, m3: 0,
+                    line: null,
+                    status: `Quick Sort completed in ${comps} comparisons and ${swaps} swaps!`
+                });
+                return trace;
+            }
+
+            /**
+             * Playback Loop Controls
+             */
+            async start() {
+                if (this.stepIndex >= this.steps.length) {
+                    this.resetToOriginal();
+                }
+
+                this.isPlaying = true;
+                this.sizeSlider.disabled = true;
+                this.btnGenerate.disabled = true;
+                this.btnStep.disabled = true;
+                this.updatePlayButtonUI();
+
+                const token = ++this.runToken;
+
+                while (this.isPlaying && token === this.runToken && this.stepIndex < this.steps.length) {
+                    this.stepForward();
+                    if (this.stepIndex >= this.steps.length) break;
+                    await new Promise(r => setTimeout(r, this.getDelayMs()));
+                }
+
+                if (token === this.runToken) {
+                    this.isPlaying = false;
+                    this.sizeSlider.disabled = false;
+                    this.btnGenerate.disabled = false;
+                    this.btnStep.disabled = false;
+                    this.updatePlayButtonUI();
+                }
+            }
+
+            pause() {
+                this.isPlaying = false;
+                this.runToken++;
+                this.sizeSlider.disabled = false;
+                this.btnGenerate.disabled = false;
+                this.btnStep.disabled = false;
+                this.updatePlayButtonUI();
+            }
+
+            stepForward() {
+                if (this.stepIndex >= this.steps.length) return;
+
+                const step = this.steps[this.stepIndex++];
+                this.array = step.array;
+
+                this.updateTelemetry(step.comps, step.m2, step.m3, step.status);
+                this.highlightCodeLine(step.line);
+                this.renderBars(step);
+                this.playTone(step.soundVal, step.soundType || 'sine');
+
+                if (this.stepIndex >= this.steps.length) {
+                    this.isPlaying = false;
+                    this.sizeSlider.disabled = false;
+                    this.btnGenerate.disabled = false;
+                    this.btnStep.disabled = false;
+                    this.updatePlayButtonUI();
+                }
+            }
+
+            updatePlayButtonUI() {
+                if (this.isPlaying) {
+                    this.btnPlay.innerHTML = `<i class="fa-solid fa-pause"></i> <span>Pause</span>`;
+                    this.btnPlay.className = 'py-2.5 px-6 bg-blazeOrange hover:bg-blazeOrange/90 text-obsidian-900 font-bold rounded-xl shadow-lg transition-all flex items-center gap-2 text-sm';
+                } else {
+                    const label = (this.stepIndex > 0 && this.stepIndex < this.steps.length) ? 'Resume' : 'Start';
+                    this.btnPlay.innerHTML = `<i class="fa-solid fa-play"></i> <span>${label}</span>`;
+                    this.btnPlay.className = 'py-2.5 px-6 bg-gradient-to-r from-electricLime to-emerald-500 hover:opacity-90 text-obsidian-900 font-bold rounded-xl shadow-lg transition-all flex items-center gap-2 text-sm';
+                }
+            }
+
+            updateTelemetry(comps, m2, m3, status) {
+                this.compCount.textContent = comps;
+                this.metricTwoVal.textContent = m2;
+                this.metricThreeVal.textContent = m3;
+                this.statusText.textContent = status;
+            }
+
+            highlightCodeLine(lineNum) {
+                const lines = this.pseudocodeBox.querySelectorAll('.code-line');
+                lines.forEach(el => {
+                    el.classList.remove('bg-electricLime/20', 'text-electricLime', 'border-l-2', 'border-electricLime', 'font-semibold');
+                    if (lineNum !== null && parseInt(el.dataset.line, 10) === lineNum) {
+                        el.classList.add('bg-electricLime/20', 'text-electricLime', 'border-l-2', 'border-electricLime', 'font-semibold');
+                    }
+                });
+            }
+
+            renderBars(state) {
+                const {
+                    array,
+                    sorted = new Set(),
+                    comparing = [],
+                    swapping = [],
+                    writing = [],
+                    leftSub = [],
+                    rightSub = [],
+                    pivot = null,
+                    range = null
+                } = state;
+
+                const maxValue = Math.max(...array, 100);
+                const showNumbers = array.length <= 25;
+
+                this.barsContainer.innerHTML = '';
+
+                array.forEach((val, idx) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'flex flex-col items-center justify-end h-full flex-1';
+
+                    const bar = document.createElement('div');
+                    bar.className = 'w-full rounded-t-sm bar-transition relative';
+                    const heightPct = Math.max(10, Math.round((val / maxValue) * 100));
+                    bar.style.height = `${heightPct}%`;
+
+                    // Color Priority System across all 3 algorithms
+                    if (sorted.has(idx)) {
+                        bar.style.backgroundColor = this.currentAlgo === 'quick' ? '#a3e635' : '#10b981';
+                        bar.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.35)';
+                    } else if (idx === pivot) {
+                        bar.style.backgroundColor = '#a855f7'; // Pivot Violet
+                        bar.style.boxShadow = '0 0 15px rgba(168, 85, 247, 0.65)';
+                    } else if (swapping.includes(idx)) {
+                        bar.style.backgroundColor = '#a3e635'; // Swap Lime
+                        bar.style.boxShadow = '0 0 15px rgba(163, 230, 53, 0.6)';
+                        bar.style.transform = 'scaleY(1.04)';
+                    } else if (writing.includes(idx)) {
+                        bar.style.backgroundColor = '#8b5cf6'; // Merge Write Violet
+                        bar.style.boxShadow = '0 0 15px rgba(139, 92, 246, 0.6)';
+                        bar.style.transform = 'scaleY(1.04)';
+                    } else if (comparing.includes(idx)) {
+                        bar.style.backgroundColor = '#f97316'; // Compare Blaze Orange
+                        bar.style.boxShadow = '0 0 15px rgba(249, 115, 22, 0.6)';
+                    } else if (leftSub.includes(idx)) {
+                        bar.style.backgroundColor = '#06b6d4'; // Merge Left Cyan
+                    } else if (rightSub.includes(idx)) {
+                        bar.style.backgroundColor = '#22c55e'; // Merge Right Green
+                    } else if (range && idx >= range[0] && idx <= range[1]) {
+                        bar.style.backgroundColor = '#60a5fa'; // Active Subarray Range
+                    } else {
+                        bar.style.backgroundColor = this.currentAlgo === 'quick' ? '#38bdf8' : '#374151';
+                    }
+
+                    if (showNumbers) {
+                        const label = document.createElement('span');
+                        label.className = 'absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] font-mono text-cloudyGray font-semibold select-none';
+                        label.textContent = val;
+                        bar.appendChild(label);
+                    }
+
+                    wrapper.appendChild(bar);
+                    this.barsContainer.appendChild(wrapper);
+                });
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            new UnifiedSortingVisualizer();
+        });
+    </script>
+</body>
+</html>
