@@ -66,10 +66,10 @@
 
     <!-- Header & Algorithm Switcher -->
     <header class="w-full bg-obsidian-800/85 backdrop-blur-md border-b border-obsidian-600/50 sticky top-0 z-30 px-4 sm:px-8 py-4">
-        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
+        <div class="max-w-7xl mx-auto flex flex-col xl:flex-row items-center justify-between gap-4">
             
             <!-- Brand Title -->
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-3 shrink-0">
                 <div id="brandIconBox" class="w-10 h-10 rounded-xl bg-gradient-to-br from-electricLime to-emerald-600 flex items-center justify-center shadow-lg transition-all duration-300">
                     <i id="brandIcon" class="fa-solid fa-chart-column text-obsidian-900 text-lg"></i>
                 </div>
@@ -84,22 +84,31 @@
 
             <!-- Algorithm Switcher Tabs -->
             <div class="flex flex-wrap justify-center items-center bg-obsidian-900/90 p-1.5 rounded-xl border border-obsidian-700 shadow-inner gap-1">
-                <button data-algo="bubble" class="algo-tab px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-electricLime text-obsidian-900 shadow">
-                    <i class="fa-solid fa-chart-column"></i> Bubble Sort
+                <button data-algo="bubble" class="algo-tab px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-electricLime text-obsidian-900 shadow">
+                    <i class="fa-solid fa-chart-column"></i> Bubble
                 </button>
-                <button data-algo="merge" class="algo-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-code-merge"></i> Merge Sort
+                <button data-algo="selection" class="algo-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-hand-pointer"></i> Selection
                 </button>
-                <button data-algo="quick" class="algo-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-bolt"></i> Quick Sort
+                <button data-algo="insertion" class="algo-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Insertion
                 </button>
-                <button data-algo="heap" class="algo-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-sitemap"></i> Heap Sort
+                <button data-algo="shell" class="algo-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-layer-group"></i> Shell
+                </button>
+                <button data-algo="merge" class="algo-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-code-merge"></i> Merge
+                </button>
+                <button data-algo="quick" class="algo-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt"></i> Quick
+                </button>
+                <button data-algo="heap" class="algo-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-sitemap"></i> Heap
                 </button>
             </div>
 
             <!-- Audio Toggle -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 shrink-0">
                 <button id="btnAudio" title="Toggle Web Audio Sonification" class="bg-obsidian-700/70 hover:bg-obsidian-700 border border-obsidian-600 px-3 py-1.5 rounded-xl text-xs font-medium text-cloudyGray flex items-center gap-2 transition-all">
                     <i id="audioIcon" class="fa-solid fa-volume-xmark"></i>
                     <span id="audioLabel">Sound Off</span>
@@ -175,7 +184,7 @@
                             <span id="metricTwoVal" class="font-mono font-bold text-electricLime text-sm">0</span>
                         </div>
                         <div id="metricThreeBox" class="hidden bg-obsidian-900/80 border border-obsidian-700 px-3 py-1.5 rounded-lg items-center gap-2">
-                            <span class="text-cloudyGray">Aux Reads:</span>
+                            <span id="metricThreeLabel" class="text-cloudyGray">Aux Reads:</span>
                             <span id="metricThreeVal" class="font-mono font-bold text-cyanSub text-sm">0</span>
                         </div>
                     </div>
@@ -254,7 +263,7 @@
 
     <!-- Footer -->
     <footer class="w-full text-center py-4 text-xs text-cloudyGray border-t border-obsidian-800 bg-obsidian-900">
-        Unified Sorting Algorithm Visualizer &bull; Bubble Sort &bull; Merge Sort &bull; Quick Sort &bull; Heap Sort
+        Unified Sorting Algorithm Visualizer &bull; Bubble &bull; Selection &bull; Insertion &bull; Shell &bull; Merge &bull; Quick &bull; Heap
     </footer>
 
     <!-- Application Logic -->
@@ -294,6 +303,99 @@
                     { line: 10, indent: 1, text: 'until not swapped' }
                 ]
             },
+            selection: {
+                title: 'SelectionSort',
+                badge: 'O(n²) Min-Scan',
+                subtitle: 'In-place minimum selection & boundary swap',
+                pseudoTag: 'Selection Sort',
+                infoTitle: 'How Selection Sort Works',
+                infoDesc: 'Selection Sort divides the array into a sorted left region and an unsorted right region. On each pass, it scans the unsorted portion to locate the smallest element and swaps it into the front of the unsorted boundary.',
+                timeComp: 'O(n²) All',
+                spaceComp: 'O(1) Aux',
+                iconClass: 'fa-hand-pointer',
+                metricTwoLabel: 'Swaps:',
+                showMetricThree: false,
+                legend: [
+                    { color: '#374151', label: 'Unsorted' },
+                    { color: '#a855f7', label: 'Current Min' },
+                    { color: '#f97316', label: 'Scanning' },
+                    { color: '#a3e635', label: 'Swapping' },
+                    { color: '#10b981', label: 'Sorted' }
+                ],
+                pseudocode: [
+                    { line: 1, indent: 0, text: 'procedure selectionSort(A):' },
+                    { line: 2, indent: 1, text: 'for i = 0 to n - 2 do' },
+                    { line: 3, indent: 2, text: 'minIdx = i' },
+                    { line: 4, indent: 2, text: 'for j = i + 1 to n - 1 do' },
+                    { line: 5, indent: 3, text: 'if A[j] < A[minIdx] then' },
+                    { line: 6, indent: 4, text: 'minIdx = j' },
+                    { line: 7, indent: 2, text: 'if minIdx != i then' },
+                    { line: 8, indent: 3, text: 'swap(A[i], A[minIdx])' }
+                ]
+            },
+            insertion: {
+                title: 'InsertionSort',
+                badge: 'O(n²) Incremental',
+                subtitle: 'Sorted prefix building via shifting & insertion',
+                pseudoTag: 'Insertion Sort',
+                infoTitle: 'How Insertion Sort Works',
+                infoDesc: 'Insertion Sort builds the final sorted array one element at a time. It picks the next unsorted key element, shifts larger elements in the sorted left prefix one position right, and inserts the key into its proper slot.',
+                timeComp: 'O(n²) / O(n)',
+                spaceComp: 'O(1) Aux',
+                iconClass: 'fa-arrow-right-to-bracket',
+                metricTwoLabel: 'Shifts:',
+                showMetricThree: false,
+                legend: [
+                    { color: '#374151', label: 'Unsorted' },
+                    { color: '#60a5fa', label: 'Sorted Prefix' },
+                    { color: '#a855f7', label: 'Active Key' },
+                    { color: '#f97316', label: 'Comparing' },
+                    { color: '#8b5cf6', label: 'Shifting / Insert' },
+                    { color: '#10b981', label: 'Final Sorted' }
+                ],
+                pseudocode: [
+                    { line: 1, indent: 0, text: 'procedure insertionSort(A):' },
+                    { line: 2, indent: 1, text: 'for i = 1 to n - 1 do' },
+                    { line: 3, indent: 2, text: 'key = A[i]; j = i - 1' },
+                    { line: 4, indent: 2, text: 'while j >= 0 and A[j] > key:' },
+                    { line: 5, indent: 3, text: 'A[j + 1] = A[j]' },
+                    { line: 6, indent: 3, text: 'j = j - 1' },
+                    { line: 7, indent: 2, text: 'A[j + 1] = key' }
+                ]
+            },
+            shell: {
+                title: 'ShellSort',
+                badge: 'Diminishing Gap',
+                subtitle: 'Gap-strided gapped insertion passes',
+                pseudoTag: 'Shell Sort',
+                infoTitle: 'How Shell Sort Works',
+                infoDesc: 'Shell Sort generalizes Insertion Sort by allowing exchanges of elements that are far apart. It sorts elements separated by a shrinking gap sequence (n/2, n/4, ..., 1), ending with a fast standard insertion pass on a nearly sorted array.',
+                timeComp: 'O(n log² n)',
+                spaceComp: 'O(1) Aux',
+                iconClass: 'fa-layer-group',
+                metricTwoLabel: 'Shifts:',
+                metricThreeLabel: 'Current Gap:',
+                showMetricThree: true,
+                legend: [
+                    { color: '#374151', label: 'Inactive' },
+                    { color: '#06b6d4', label: 'Gap Subsequence' },
+                    { color: '#a855f7', label: 'Active Key' },
+                    { color: '#f97316', label: 'Gap Comparing' },
+                    { color: '#8b5cf6', label: 'Gap Shifting' },
+                    { color: '#10b981', label: 'Sorted' }
+                ],
+                pseudocode: [
+                    { line: 1, indent: 0, text: 'procedure shellSort(A):' },
+                    { line: 2, indent: 1, text: 'gap = floor(n / 2)' },
+                    { line: 3, indent: 1, text: 'while gap > 0 do' },
+                    { line: 4, indent: 2, text: 'for i = gap to n - 1 do' },
+                    { line: 5, indent: 3, text: 'temp = A[i]; j = i' },
+                    { line: 6, indent: 3, text: 'while j >= gap and A[j-gap] > temp:' },
+                    { line: 7, indent: 4, text: 'A[j] = A[j - gap]; j -= gap' },
+                    { line: 8, indent: 3, text: 'A[j] = temp' },
+                    { line: 9, indent: 2, text: 'gap = floor(gap / 2)' }
+                ]
+            },
             merge: {
                 title: 'MergeSort',
                 badge: 'Divide & Conquer',
@@ -305,6 +407,7 @@
                 spaceComp: 'O(n) Aux',
                 iconClass: 'fa-code-merge',
                 metricTwoLabel: 'Aux Writes:',
+                metricThreeLabel: 'Aux Reads:',
                 showMetricThree: true,
                 legend: [
                     { color: '#374151', label: 'Normal' },
@@ -433,6 +536,7 @@
                 this.metricTwoLabel = document.getElementById('metricTwoLabel');
                 this.metricTwoVal = document.getElementById('metricTwoVal');
                 this.metricThreeBox = document.getElementById('metricThreeBox');
+                this.metricThreeLabel = document.getElementById('metricThreeLabel');
                 this.metricThreeVal = document.getElementById('metricThreeVal');
 
                 this.statusText = document.getElementById('statusText');
@@ -496,8 +600,8 @@
                 this.algoTabs.forEach(tab => {
                     const isActive = tab.dataset.algo === this.currentAlgo;
                     tab.className = isActive
-                        ? 'algo-tab px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-electricLime text-obsidian-900 shadow'
-                        : 'algo-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-2';
+                        ? 'algo-tab px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-electricLime text-obsidian-900 shadow'
+                        : 'algo-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-cloudyGray hover:text-white transition-all flex items-center gap-1.5';
                 });
 
                 // Update Header & Info Cards
@@ -516,6 +620,7 @@
                 // Update Metrics Labels
                 this.metricTwoLabel.textContent = cfg.metricTwoLabel;
                 if (cfg.showMetricThree) {
+                    this.metricThreeLabel.textContent = cfg.metricThreeLabel || 'Aux Reads:';
                     this.metricThreeBox.classList.remove('hidden');
                     this.metricThreeBox.classList.add('flex');
                 } else {
@@ -614,17 +719,20 @@
                 this.array = [...this.originalArray];
                 this.stepIndex = 0;
 
-                if (this.currentAlgo === 'bubble') {
-                    this.steps = this.buildBubbleSortSteps([...this.originalArray]);
-                } else if (this.currentAlgo === 'merge') {
-                    this.steps = this.buildMergeSortSteps([...this.originalArray]);
-                } else if (this.currentAlgo === 'quick') {
-                    this.steps = this.buildQuickSortSteps([...this.originalArray]);
-                } else {
-                    this.steps = this.buildHeapSortSteps([...this.originalArray]);
-                }
+                const builders = {
+                    bubble: () => this.buildBubbleSortSteps([...this.originalArray]),
+                    selection: () => this.buildSelectionSortSteps([...this.originalArray]),
+                    insertion: () => this.buildInsertionSortSteps([...this.originalArray]),
+                    shell: () => this.buildShellSortSteps([...this.originalArray]),
+                    merge: () => this.buildMergeSortSteps([...this.originalArray]),
+                    quick: () => this.buildQuickSortSteps([...this.originalArray]),
+                    heap: () => this.buildHeapSortSteps([...this.originalArray])
+                };
 
-                this.updateTelemetry(0, 0, 0, `Ready (${ALGO_CONFIGS[this.currentAlgo].pseudoTag}). Click Start or Step.`);
+                this.steps = builders[this.currentAlgo]();
+
+                const initialM3 = this.currentAlgo === 'shell' ? Math.floor(this.originalArray.length / 2) : 0;
+                this.updateTelemetry(0, 0, initialM3, `Ready (${ALGO_CONFIGS[this.currentAlgo].pseudoTag}). Click Start or Step.`);
                 this.highlightCodeLine(null);
                 this.renderBars({ array: this.array, sorted: new Set() });
             }
@@ -689,7 +797,254 @@
             }
 
             /**
-             * 2. MERGE SORT TRACE GENERATOR
+             * 2. SELECTION SORT TRACE GENERATOR
+             */
+            buildSelectionSortSteps(arr) {
+                const trace = [];
+                const sorted = new Set();
+                let comps = 0, swaps = 0;
+                const n = arr.length;
+
+                for (let i = 0; i < n - 1; i++) {
+                    let minIdx = i;
+                    trace.push({
+                        array: [...arr],
+                        pivot: minIdx,
+                        sorted: new Set(sorted),
+                        comps, m2: swaps, m3: 0,
+                        line: 3,
+                        status: `Pass ${i + 1}: Initial minimum set to A[${minIdx}] = ${arr[minIdx]}`
+                    });
+
+                    for (let j = i + 1; j < n; j++) {
+                        comps++;
+                        trace.push({
+                            array: [...arr],
+                            pivot: minIdx,
+                            comparing: [j],
+                            sorted: new Set(sorted),
+                            comps, m2: swaps, m3: 0,
+                            line: 5,
+                            soundVal: arr[j],
+                            status: `Scanning A[${j}] (${arr[j]}) against current min A[${minIdx}] (${arr[minIdx]})`
+                        });
+
+                        if (arr[j] < arr[minIdx]) {
+                            minIdx = j;
+                            trace.push({
+                                array: [...arr],
+                                pivot: minIdx,
+                                sorted: new Set(sorted),
+                                comps, m2: swaps, m3: 0,
+                                line: 6,
+                                soundVal: arr[minIdx],
+                                status: `New minimum found at index ${minIdx} (${arr[minIdx]})`
+                            });
+                        }
+                    }
+
+                    if (minIdx !== i) {
+                        [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+                        swaps++;
+                        trace.push({
+                            array: [...arr],
+                            swapping: [i, minIdx],
+                            sorted: new Set(sorted),
+                            comps, m2: swaps, m3: 0,
+                            line: 8,
+                            soundVal: arr[i],
+                            soundType: 'triangle',
+                            status: `Swapped minimum ${arr[i]} into sorted position ${i}`
+                        });
+                    }
+                    sorted.add(i);
+                }
+
+                sorted.add(n - 1);
+                trace.push({
+                    array: [...arr],
+                    sorted: new Set(sorted),
+                    comps, m2: swaps, m3: 0,
+                    line: null,
+                    status: `Selection Sort completed in ${comps} comparisons and ${swaps} swaps!`
+                });
+                return trace;
+            }
+
+            /**
+             * 3. INSERTION SORT TRACE GENERATOR
+             */
+            buildInsertionSortSteps(arr) {
+                const trace = [];
+                const sorted = new Set();
+                let comps = 0, shifts = 0;
+                const n = arr.length;
+
+                for (let i = 1; i < n; i++) {
+                    const key = arr[i];
+                    let j = i - 1;
+
+                    trace.push({
+                        array: [...arr],
+                        range: [0, i - 1],
+                        pivot: i,
+                        sorted: new Set(sorted),
+                        comps, m2: shifts, m3: 0,
+                        line: 3,
+                        soundVal: key,
+                        status: `Selected key A[${i}] = ${key} to insert into sorted prefix [0..${i - 1}]`
+                    });
+
+                    while (j >= 0) {
+                        comps++;
+                        trace.push({
+                            array: [...arr],
+                            range: [0, i],
+                            pivot: j + 1,
+                            comparing: [j],
+                            sorted: new Set(sorted),
+                            comps, m2: shifts, m3: 0,
+                            line: 4,
+                            soundVal: arr[j],
+                            status: `Comparing key (${key}) with A[${j}] (${arr[j]})`
+                        });
+
+                        if (arr[j] > key) {
+                            arr[j + 1] = arr[j];
+                            shifts++;
+                            trace.push({
+                                array: [...arr],
+                                range: [0, i],
+                                writing: [j + 1],
+                                sorted: new Set(sorted),
+                                comps, m2: shifts, m3: 0,
+                                line: 5,
+                                soundVal: arr[j + 1],
+                                soundType: 'triangle',
+                                status: `Shifted A[${j}] (${arr[j]}) right to index ${j + 1}`
+                            });
+                            j--;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    arr[j + 1] = key;
+                    trace.push({
+                        array: [...arr],
+                        range: [0, i],
+                        writing: [j + 1],
+                        sorted: new Set(sorted),
+                        comps, m2: shifts, m3: 0,
+                        line: 7,
+                        soundVal: key,
+                        soundType: 'triangle',
+                        status: `Inserted key (${key}) at index ${j + 1}`
+                    });
+                }
+
+                for (let k = 0; k < n; k++) sorted.add(k);
+                trace.push({
+                    array: [...arr],
+                    sorted: new Set(sorted),
+                    comps, m2: shifts, m3: 0,
+                    line: null,
+                    status: `Insertion Sort completed in ${comps} comparisons and ${shifts} shifts!`
+                });
+                return trace;
+            }
+
+            /**
+             * 4. SHELL SORT TRACE GENERATOR
+             */
+            buildShellSortSteps(arr) {
+                const trace = [];
+                const sorted = new Set();
+                let comps = 0, shifts = 0;
+                const n = arr.length;
+
+                for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+                    for (let i = gap; i < n; i++) {
+                        const temp = arr[i];
+                        let j = i;
+
+                        // Highlight elements belonging to the current gap stride chain
+                        const gapChain = [];
+                        for (let g = i % gap; g < n; g += gap) gapChain.push(g);
+
+                        trace.push({
+                            array: [...arr],
+                            leftSub: gapChain,
+                            pivot: i,
+                            sorted: new Set(sorted),
+                            comps, m2: shifts, m3: gap,
+                            line: 5,
+                            soundVal: temp,
+                            status: `Gap = ${gap}: Picked temp A[${i}] = ${temp}`
+                        });
+
+                        while (j >= gap) {
+                            comps++;
+                            trace.push({
+                                array: [...arr],
+                                leftSub: gapChain,
+                                pivot: j,
+                                comparing: [j - gap],
+                                sorted: new Set(sorted),
+                                comps, m2: shifts, m3: gap,
+                                line: 6,
+                                soundVal: arr[j - gap],
+                                status: `Gap = ${gap}: Comparing A[${j - gap}] (${arr[j - gap]}) with temp (${temp})`
+                            });
+
+                            if (arr[j - gap] > temp) {
+                                arr[j] = arr[j - gap];
+                                shifts++;
+                                trace.push({
+                                    array: [...arr],
+                                    leftSub: gapChain,
+                                    writing: [j],
+                                    sorted: new Set(sorted),
+                                    comps, m2: shifts, m3: gap,
+                                    line: 7,
+                                    soundVal: arr[j],
+                                    soundType: 'triangle',
+                                    status: `Gap = ${gap}: Shifted A[${j - gap}] (${arr[j]}) to index ${j}`
+                                });
+                                j -= gap;
+                            } else {
+                                break;
+                            }
+                        }
+
+                        arr[j] = temp;
+                        trace.push({
+                            array: [...arr],
+                            leftSub: gapChain,
+                            writing: [j],
+                            sorted: new Set(sorted),
+                            comps, m2: shifts, m3: gap,
+                            line: 8,
+                            soundVal: temp,
+                            soundType: 'triangle',
+                            status: `Gap = ${gap}: Placed temp (${temp}) at index ${j}`
+                        });
+                    }
+                }
+
+                for (let k = 0; k < n; k++) sorted.add(k);
+                trace.push({
+                    array: [...arr],
+                    sorted: new Set(sorted),
+                    comps, m2: shifts, m3: 0,
+                    line: null,
+                    status: `Shell Sort completed in ${comps} comparisons and ${shifts} shifts!`
+                });
+                return trace;
+            }
+
+            /**
+             * 5. MERGE SORT TRACE GENERATOR
              */
             buildMergeSortSteps(arr) {
                 const trace = [];
@@ -815,7 +1170,7 @@
             }
 
             /**
-             * 3. QUICK SORT (LOMUTO) TRACE GENERATOR
+             * 6. QUICK SORT (LOMUTO) TRACE GENERATOR
              */
             buildQuickSortSteps(arr) {
                 const trace = [];
@@ -915,7 +1270,7 @@
             }
 
             /**
-             * 4. HEAP SORT TRACE GENERATOR
+             * 7. HEAP SORT TRACE GENERATOR
              */
             buildHeapSortSteps(arr) {
                 const trace = [];
@@ -992,12 +1347,10 @@
                     }
                 };
 
-                // Phase 1: Build Max-Heap
                 for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
                     heapify(n, i);
                 }
 
-                // Phase 2: Extract max root one by one
                 for (let end = n - 1; end > 0; end--) {
                     [arr[0], arr[end]] = [arr[end], arr[0]];
                     swaps++;
@@ -1143,26 +1496,26 @@
                     const heightPct = Math.max(10, Math.round((val / maxValue) * 100));
                     bar.style.height = `${heightPct}%`;
 
-                    // Color Priority System across all 4 algorithms
+                    // Unified Color Priority System across all 7 algorithms
                     if (sorted.has(idx)) {
                         bar.style.backgroundColor = this.currentAlgo === 'quick' ? '#a3e635' : '#10b981';
                         bar.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.35)';
                     } else if (idx === pivot) {
-                        bar.style.backgroundColor = '#a855f7'; // Pivot / Heap Parent Violet
+                        bar.style.backgroundColor = '#a855f7'; // Pivot / Min / Key / Parent Violet
                         bar.style.boxShadow = '0 0 15px rgba(168, 85, 247, 0.65)';
                     } else if (swapping.includes(idx)) {
                         bar.style.backgroundColor = '#a3e635'; // Swap Lime
                         bar.style.boxShadow = '0 0 15px rgba(163, 230, 53, 0.6)';
                         bar.style.transform = 'scaleY(1.04)';
                     } else if (writing.includes(idx)) {
-                        bar.style.backgroundColor = '#8b5cf6'; // Merge Write Violet
+                        bar.style.backgroundColor = '#8b5cf6'; // Shift / Write Violet
                         bar.style.boxShadow = '0 0 15px rgba(139, 92, 246, 0.6)';
                         bar.style.transform = 'scaleY(1.04)';
                     } else if (comparing.includes(idx)) {
                         bar.style.backgroundColor = '#f97316'; // Compare Blaze Orange
                         bar.style.boxShadow = '0 0 15px rgba(249, 115, 22, 0.6)';
                     } else if (leftSub.includes(idx)) {
-                        bar.style.backgroundColor = '#06b6d4'; // Merge Left Cyan
+                        bar.style.backgroundColor = '#06b6d4'; // Merge Left / Shell Gap Subsequence Cyan
                     } else if (rightSub.includes(idx)) {
                         bar.style.backgroundColor = '#22c55e'; // Merge Right Green
                     } else if (range && idx >= range[0] && idx <= range[1]) {
