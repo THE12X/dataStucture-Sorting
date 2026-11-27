@@ -1,0 +1,26 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0b0f19;
+    color: #f3f4f6;
+}
+
+.bar-transition {
+    transition: height 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.14s ease,
+        transform 0.14s ease,
+        box-shadow 0.14s ease;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #111827;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 3px;
+}
